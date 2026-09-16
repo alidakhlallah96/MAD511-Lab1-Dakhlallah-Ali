@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -98,31 +99,45 @@ fun SetListApp() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // LazyColumn for dynamic list
+        // LazyColumn for dynamic list with delete action passed in
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
             items(artistList) { artist ->
-                ArtistRow(artist = artist)
+                ArtistRow(
+                    artist = artist,
+                    onDelete = { artistList.remove(artist) }
+                )
             }
         }
     }
 }
 
-// Single row layout for an individual artist
+// Single row layout with delete buttom and logic
 @Composable
-fun ArtistRow(artist: Artist) {
-    Column(
+fun ArtistRow(
+    artist: Artist,
+    onDelete: () -> Unit
+) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = artist.name,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text(text = "Genre: ${artist.genre}")
-        Text(text = "Formed: ${artist.yearFormed}")
+        Column {
+            Text(
+                text = artist.name,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(text = "Genre: ${artist.genre}")
+            Text(text = "Formed: ${artist.yearFormed}")
+        }
+
+        Button(onClick = onDelete) {
+            Text("Delete")
+        }
     }
 }
