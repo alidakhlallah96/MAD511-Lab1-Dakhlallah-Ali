@@ -4,11 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,5 +95,34 @@ fun SetListApp() {
         ) {
             Text("Add Artist")
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // LazyColumn for dynamic list
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(artistList) { artist ->
+                ArtistRow(artist = artist)
+            }
+        }
+    }
+}
+
+// Single row layout for an individual artist
+@Composable
+fun ArtistRow(artist: Artist) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        Text(
+            text = artist.name,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Text(text = "Genre: ${artist.genre}")
+        Text(text = "Formed: ${artist.yearFormed}")
     }
 }
