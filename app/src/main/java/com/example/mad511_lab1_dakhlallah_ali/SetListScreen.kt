@@ -27,6 +27,9 @@ fun SetListScreen() {
         )
     }
 
+    // Clears previewed items
+    var isFirstSubmission by remember { mutableStateOf(true) }
+    
     // Text field state variables
     var nameInput by rememberSaveable { mutableStateOf("") }
     var genreInput by rememberSaveable { mutableStateOf("") }
@@ -75,6 +78,12 @@ fun SetListScreen() {
                         genre = genreInput.trim(),
                         yearFormed = year
                     )
+
+                    // Clear preset items only on the very first submission
+                    if (isFirstSubmission) {
+                        artistList.clear()
+                        isFirstSubmission = false
+                    }
 
                     artistList.add(newArtist)
 
