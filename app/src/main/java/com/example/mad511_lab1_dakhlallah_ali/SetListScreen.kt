@@ -9,8 +9,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mad511_lab1_dakhlallah_ali.ui.theme.ChicagoBearsTheme
 
 // Stateful caller
 @Composable
@@ -154,5 +156,27 @@ fun ArtistRow(
         Button(onClick = onDelete) {
             Text("Delete")
         }
+    }
+}
+
+// Preview for stateless form and sample data with my theme
+@Preview(showBackground = true)
+@Composable
+fun SetListContentPreview() {
+    ChicagoBearsTheme {
+        SetListContent(
+            nameInput = "Drake",
+            onNameChange = {},
+            genreInput = "Rap",
+            onGenreChange = {},
+            yearInput = "2008",
+            onYearChange = {},
+            artistList = listOf(
+                Artist("The Weekend", "RnB", 2010),
+                Artist("Drake", "Rap", 2008)
+            ),
+            onAddArtist = {},
+            onDeleteArtist = {}
+        )
     }
 }
