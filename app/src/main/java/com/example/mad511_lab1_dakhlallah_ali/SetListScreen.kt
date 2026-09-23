@@ -19,16 +19,26 @@ import com.example.mad511_lab1_dakhlallah_ali.ui.theme.ChicagoBearsTheme
 // Stateful caller
 @Composable
 fun SetListScreen() {
-    // List state to keep track of added artists
-    val artistList = remember { mutableStateListOf<Artist>() }
+    // List state initialized with sample data so the app isn't blank on launch
+    val artistList = remember {
+        mutableStateListOf(
+            Artist("The Weeknd", "RnB", 2010),
+            Artist("Drake", "Rap", 2008)
+        )
+    }
 
     // Text field state variables
     var nameInput by rememberSaveable { mutableStateOf("") }
     var genreInput by rememberSaveable { mutableStateOf("") }
     var yearInput by rememberSaveable { mutableStateOf("") }
 
-    // Check if year is non number when typed
-    val yearError = yearInput.isNotEmpty() && yearInput.toIntOrNull() == null
+    // validation rules
+    val nameError = nameInput.isNotEmpty() && nameInput.trim().isEmpty()
+    val genreError = genreInput.isNotEmpty() && genreInput.trim().isEmpty()
+
+    // year formed must be within this range
+    val parsedYear = yearInput.toIntOrNull()
+    val yearError = yearInput.isNotEmpty() && (parsedYear == null || parsedYear < 1900 || parsedYear > 2026)
 
     // Wrap screen in Scaffold
     Scaffold(
@@ -38,19 +48,21 @@ fun SetListScreen() {
             SetListContent(
                 nameInput = nameInput,
                 onNameChange = { nameInput = it },
+                nameError = nameError,
                 genreInput = genreInput,
                 onGenreChange = { genreInput = it },
+                genreError = genreError,
                 yearInput = yearInput,
                 onYearChange = { yearInput = it },
                 yearError = yearError,
                 artistList = artistList,
                 onAddArtist = {
-                    val parsedYear: Int = yearInput.toIntOrNull() ?: 0
+                    val year: Int = yearInput.toIntOrNull() ?: 0
 
                     val newArtist = Artist(
                         name = nameInput.trim(),
                         genre = genreInput.trim(),
-                        yearFormed = parsedYear
+                        yearFormed = year
                     )
 
                     artistList.add(newArtist)
@@ -73,11 +85,13 @@ fun SetListScreen() {
 fun SetListContent(
     nameInput: String,
     onNameChange: (String) -> Unit,
+    nameError: Boolean = false,
     genreInput: String,
     onGenreChange: (String) -> Unit,
+    genreError: Boolean = false,
     yearInput: String,
     onYearChange: (String) -> Unit,
-    yearError: Boolean = false, // Accept error state parameter
+    yearError: Boolean = false,
     artistList: List<Artist>,
     onAddArtist: () -> Unit,
     onDeleteArtist: (Artist) -> Unit
@@ -88,36 +102,41 @@ fun SetListContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Name input field
+        // Name input field with error handling
         OutlinedTextField(
             value = nameInput,
             onValueChange = onNameChange,
             label = { Text("Artist") },
+            isError = nameError,
+            supportingText = if (nameError) {
+                { Text("Name cannot be empty") }
+            } else null,
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
 
-        // Genre input field
+        // Genre input field with error handling
         OutlinedTextField(
             value = genreInput,
             onValueChange = onGenreChange,
             label = { Text("Genre") },
+            isError = genreError,
+            supportingText = if (genreError) {
+                { Text("Genre cannot be empty") }
+            } else null,
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
 
-        // Year field with error handling and reserved text space
-        // Set keyboard to numbers for the year input field
+        // Year field with error handling, numbered keyboard, and range check
         OutlinedTextField(
             value = yearInput,
             onValueChange = onYearChange,
             label = { Text("Year Formed") },
             isError = yearError,
-            supportingText = {
-                if (yearError) {
-                    Text("Year must be a valid number")
-                }
-            },
+            supportingText = if (yearError) {
+                { Text("Enter a valid year (1900 - 2026)") }
+            } else null,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
@@ -182,13 +201,15 @@ fun SetListContentPreview() {
         SetListContent(
             nameInput = "Drake",
             onNameChange = {},
+            nameError = false,
             genreInput = "Rap",
             onGenreChange = {},
+            genreError = false,
             yearInput = "2008",
             onYearChange = {},
-            yearError = false, // Passed false for default preview state
+            yearError = false,
             artistList = listOf(
-                Artist("The Weekend", "RnB", 2010),
+                Artist("The Weeknd", "RnB", 2010),
                 Artist("Drake", "Rap", 2008)
             ),
             onAddArtist = {},
