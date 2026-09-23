@@ -40,6 +40,16 @@ fun SetListScreen() {
     val parsedYear = yearInput.toIntOrNull()
     val yearError = yearInput.isNotEmpty() && (parsedYear == null || parsedYear < 1900 || parsedYear > 2026)
 
+    // Guard the Add button with derivedStateOf
+    val isFormValid by remember {
+        derivedStateOf {
+            nameInput.trim().isNotEmpty() &&
+                    genreInput.trim().isNotEmpty() &&
+                    yearInput.trim().isNotEmpty() &&
+                    !nameError && !genreError && !yearError
+        }
+    }
+
     // Wrap screen in Scaffold
     Scaffold(
         modifier = Modifier.fillMaxSize()
@@ -55,6 +65,7 @@ fun SetListScreen() {
                 yearInput = yearInput,
                 onYearChange = { yearInput = it },
                 yearError = yearError,
+                isAddEnabled = isFormValid,
                 artistList = artistList,
                 onAddArtist = {
                     val year: Int = yearInput.toIntOrNull() ?: 0
@@ -92,6 +103,7 @@ fun SetListContent(
     yearInput: String,
     onYearChange: (String) -> Unit,
     yearError: Boolean = false,
+    isAddEnabled: Boolean = false,
     artistList: List<Artist>,
     onAddArtist: () -> Unit,
     onDeleteArtist: (Artist) -> Unit
@@ -145,6 +157,7 @@ fun SetListContent(
         // Add button
         Button(
             onClick = onAddArtist,
+            enabled = isAddEnabled,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Add Artist")
