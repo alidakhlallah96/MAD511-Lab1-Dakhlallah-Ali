@@ -3,12 +3,14 @@ package com.example.mad511_lab1_dakhlallah_ali
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -105,6 +107,7 @@ fun SetListContent(
         )
 
         // Year field with error handling and reserved text space
+        // Set keyboard to numbers for the year input field
         OutlinedTextField(
             value = yearInput,
             onValueChange = onYearChange,
@@ -115,6 +118,7 @@ fun SetListContent(
                     Text("Year must be a valid number")
                 }
             },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
