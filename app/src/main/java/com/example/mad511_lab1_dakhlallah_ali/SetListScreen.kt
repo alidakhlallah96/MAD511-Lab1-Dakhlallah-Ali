@@ -43,13 +43,13 @@ fun SetListScreen() {
     // Guard the Add button with derivedStateOf
     val isFormValid by remember {
         derivedStateOf {
+            val parsed = yearInput.toIntOrNull()
             nameInput.trim().isNotEmpty() &&
                     genreInput.trim().isNotEmpty() &&
-                    yearInput.trim().isNotEmpty() &&
-                    !nameError && !genreError && !yearError
+                    parsed != null &&
+                    parsed in 1900..2026
         }
     }
-
     // Wrap screen in Scaffold
     Scaffold(
         modifier = Modifier.fillMaxSize()
