@@ -25,34 +25,45 @@ fun SetListScreen() {
     var genreInput by rememberSaveable { mutableStateOf("") }
     var yearInput by rememberSaveable { mutableStateOf("") }
 
-    SetListContent(
-        nameInput = nameInput,
-        onNameChange = { nameInput = it },
-        genreInput = genreInput,
-        onGenreChange = { genreInput = it },
-        yearInput = yearInput,
-        onYearChange = { yearInput = it },
-        artistList = artistList,
-        onAddArtist = {
-            val parsedYear: Int = yearInput.toIntOrNull() ?: 0
+    // Check if year is non number when typed
+    val yearError = yearInput.isNotEmpty() && yearInput.toIntOrNull() == null
 
-            val newArtist = Artist(
-                name = nameInput.trim(),
-                genre = genreInput.trim(),
-                yearFormed = parsedYear
+    // Wrap screen in Scaffold
+    Scaffold(
+        modifier = Modifier.fillMaxSize()
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            SetListContent(
+                nameInput = nameInput,
+                onNameChange = { nameInput = it },
+                genreInput = genreInput,
+                onGenreChange = { genreInput = it },
+                yearInput = yearInput,
+                onYearChange = { yearInput = it },
+                yearError = yearError,
+                artistList = artistList,
+                onAddArtist = {
+                    val parsedYear: Int = yearInput.toIntOrNull() ?: 0
+
+                    val newArtist = Artist(
+                        name = nameInput.trim(),
+                        genre = genreInput.trim(),
+                        yearFormed = parsedYear
+                    )
+
+                    artistList.add(newArtist)
+
+                    // Clear inputs after adding
+                    nameInput = ""
+                    genreInput = ""
+                    yearInput = ""
+                },
+                onDeleteArtist = { artist ->
+                    artistList.remove(artist)
+                }
             )
-
-            artistList.add(newArtist)
-
-            // Clear inputs after adding
-            nameInput = ""
-            genreInput = ""
-            yearInput = ""
-        },
-        onDeleteArtist = { artist ->
-            artistList.remove(artist)
         }
-    )
+    }
 }
 
 // Stateless child composable
@@ -64,6 +75,7 @@ fun SetListContent(
     onGenreChange: (String) -> Unit,
     yearInput: String,
     onYearChange: (String) -> Unit,
+    yearError: Boolean = false, // Accept error state parameter
     artistList: List<Artist>,
     onAddArtist: () -> Unit,
     onDeleteArtist: (Artist) -> Unit
@@ -71,7 +83,8 @@ fun SetListContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Name input field
         OutlinedTextField(
@@ -82,8 +95,6 @@ fun SetListContent(
             singleLine = true
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
         // Genre input field
         OutlinedTextField(
             value = genreInput,
@@ -93,18 +104,20 @@ fun SetListContent(
             singleLine = true
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Year input field
+        // Year field with error handling and reserved text space
         OutlinedTextField(
             value = yearInput,
             onValueChange = onYearChange,
             label = { Text("Year Formed") },
+            isError = yearError,
+            supportingText = {
+                if (yearError) {
+                    Text("Year must be a valid number")
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         // Add button
         Button(
@@ -113,8 +126,6 @@ fun SetListContent(
         ) {
             Text("Add Artist")
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         // LazyColumn for dynamic list with delete action passed in
         LazyColumn(
@@ -171,6 +182,7 @@ fun SetListContentPreview() {
             onGenreChange = {},
             yearInput = "2008",
             onYearChange = {},
+            yearError = false, // Passed false for default preview state
             artistList = listOf(
                 Artist("The Weekend", "RnB", 2010),
                 Artist("Drake", "Rap", 2008)
