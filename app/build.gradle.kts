@@ -57,6 +57,9 @@ dependencies {
     implementation("androidx.navigation3:navigation3-runtime:1.0.0-alpha02")
     implementation("androidx.navigation3:navigation3-ui:1.0.0-alpha02")
 
+    implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3:2.9.0-alpha10")
+    implementation("androidx.navigation3:navigation3-saveable-state:1.0.0-alpha02")
+
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
     // ViewModel & Lifecycle for Jetpack Compose
