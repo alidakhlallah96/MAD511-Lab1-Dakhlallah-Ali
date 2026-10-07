@@ -55,4 +55,10 @@ dependencies {
     implementation("androidx.navigation3:navigation3-runtime:1.0.0-alpha01")
     implementation("androidx.navigation3:navigation3-ui:1.0.0-alpha01")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    // ViewModel & Lifecycle for Jetpack Compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+
+    // Material Icons
+    implementation("androidx.compose.material:material-icons-extended")
 }
