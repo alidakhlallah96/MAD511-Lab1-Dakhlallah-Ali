@@ -33,24 +33,24 @@ fun SetListNavHost(repository: ArtistRepository) {
     val saveableStateDecorator = navEntryDecorator<SetListDestination>(
         onPop = { _ -> }
     ) { entry ->
-        saveableStateHolder.SaveableStateProvider(key = entry.key) {
+        saveableStateHolder.SaveableStateProvider(key = entry.key.toString()) {
             entry.content(entry.key)
         }
     }
 
-
     // 2. ViewModelStore Decorator
-    val viewModelStores = remember { mutableMapOf<SetListDestination, ViewModelStore>() }
+    val viewModelStores = remember { mutableMapOf<String, ViewModelStore>() }
 
     val viewModelStoreDecorator = navEntryDecorator<SetListDestination>(
         onPop = { poppedKey ->
             (poppedKey as? SetListDestination)?.let { key ->
-                viewModelStores.remove(key)?.clear()
+                viewModelStores.remove(key.toString())?.clear()
             }
         }
     ) { entry ->
-        val viewModelStore = viewModelStores.getOrPut(entry.key) { ViewModelStore() }
-        val viewModelStoreOwner = remember(entry.key) {
+        val keyString = entry.key.toString()
+        val viewModelStore = viewModelStores.getOrPut(keyString) { ViewModelStore() }
+        val viewModelStoreOwner = remember(keyString) {
             object : ViewModelStoreOwner {
                 override val viewModelStore: ViewModelStore = viewModelStore
             }
