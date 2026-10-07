@@ -22,8 +22,8 @@ fun SetListScreen() {
     // List state initialized with sample data so the app isn't blank on launch
     val artistList = remember {
         mutableStateListOf(
-            Artist("The Weeknd", "RnB", 2010),
-            Artist("Drake", "Rap", 2008)
+            Artist(id = 1, name = "The Weeknd", genre = "RnB", yearFormed = 2010),
+            Artist(id = 2, name = "Drake", genre = "Rap", yearFormed = 2008)
         )
     }
 
@@ -74,6 +74,7 @@ fun SetListScreen() {
                     val year: Int = yearInput.toIntOrNull() ?: 0
 
                     val newArtist = Artist(
+                        id = 3,
                         name = nameInput.trim(),
                         genre = genreInput.trim(),
                         yearFormed = year
@@ -231,8 +232,8 @@ fun SetListContentPreview() {
             onYearChange = {},
             yearError = false,
             artistList = listOf(
-                Artist("The Weeknd", "RnB", 2010),
-                Artist("Drake", "Rap", 2008)
+                Artist(id = 1, name = "The Weeknd", genre = "RnB", yearFormed = 2010),
+                Artist(id = 2, name = "Drake", genre = "Rap", yearFormed = 2008)
             ),
             onAddArtist = {},
             onDeleteArtist = {}
