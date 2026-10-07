@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    kotlin("plugin.serialization") version "1.9.22"
 }
 
 android {
@@ -51,4 +52,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation("androidx.navigation3:navigation3-runtime:1.0.0-alpha01")
+    implementation("androidx.navigation3:navigation3-ui:1.0.0-alpha01")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 }
