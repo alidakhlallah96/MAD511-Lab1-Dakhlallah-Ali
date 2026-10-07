@@ -52,9 +52,13 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
-    implementation("androidx.navigation3:navigation3-runtime:1.0.0-alpha01")
-    implementation("androidx.navigation3:navigation3-ui:1.0.0-alpha01")
+
+    // Navigation 3 Dependencies (Updated to alpha02)
+    implementation("androidx.navigation3:navigation3-runtime:1.0.0-alpha02")
+    implementation("androidx.navigation3:navigation3-ui:1.0.0-alpha02")
+
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
     // ViewModel & Lifecycle for Jetpack Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
