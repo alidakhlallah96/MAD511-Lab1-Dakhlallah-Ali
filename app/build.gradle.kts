@@ -6,14 +6,12 @@ plugins {
 
 android {
     namespace = "com.example.mad511_lab1_dakhlallah_ali"
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = 36 // Updated to 36 to support Navigation 3 and activity-compose alpha dependencies
 
     defaultConfig {
         applicationId = "com.example.mad511_lab1_dakhlallah_ali"
         minSdk = 24
-        targetSdk = 37
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -53,12 +51,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
-    // Navigation 3 Dependencies (Updated to alpha02)
+    // Navigation 3 Dependencies
     implementation("androidx.navigation3:navigation3-runtime:1.0.0-alpha02")
     implementation("androidx.navigation3:navigation3-ui:1.0.0-alpha02")
-
-    implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3:2.9.0-alpha10")
-    implementation("androidx.navigation3:navigation3-saveable-state:1.0.0-alpha02")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
