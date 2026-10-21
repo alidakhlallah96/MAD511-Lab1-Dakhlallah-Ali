@@ -16,6 +16,9 @@ interface ArtistRepository {
     // look up a single artist by id
     fun getArtist(id: Int): Flow<Artist?>
 
+    // Search artists whose name starts with search term
+    fun searchArtists(term: String): Flow<List<Artist>>
+
     // Suspend function to add an artist
     suspend fun addArtist(name: String, genre: String, yearFormed: Int)
 
@@ -44,7 +47,12 @@ class FakeArtistRepository : ArtistRepository {
         return _artists.map { list -> list.firstOrNull { it.id == id } }
     }
 
-    //  sets addedAt timestamp when creating a new artist
+    // Search artists matching given prefix
+    override fun searchArtists(term: String): Flow<List<Artist>> {
+        return _artists.map { list -> list.filter { it.name.startsWith(term, ignoreCase = true) } }
+    }
+
+    // sets addedAt timestamp when creating a new artist
     override suspend fun addArtist(name: String, genre: String, yearFormed: Int) {
         _artists.update { currentList ->
             val newArtist = Artist(
