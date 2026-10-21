@@ -26,6 +26,9 @@ import com.example.mad511_lab1_dakhlallah_ali.data.ArtistRepository
 import com.example.mad511_lab1_dakhlallah_ali.ui.theme.ChicagoBearsTheme
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.ArtistDetailUiState
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.ArtistDetailViewModel
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 // Stateful Route composable
 @Composable
@@ -83,9 +86,15 @@ fun ArtistDetailScreen(
         ) {
             when (uiState) {
                 is ArtistDetailUiState.Success -> {
+                    // Formats addedAt timestamp into readable local date and time
+                    val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+                        .withZone(ZoneId.systemDefault())
+                    val formattedTimestamp = formatter.format(uiState.artist.addedAt)
+
                     Text(text = "Name: ${uiState.artist.name}", style = MaterialTheme.typography.titleLarge)
                     Text(text = "Genre: ${uiState.artist.genre}", style = MaterialTheme.typography.bodyLarge)
                     Text(text = "Year Formed: ${uiState.artist.yearFormed}", style = MaterialTheme.typography.bodyLarge)
+                    Text(text = "Added: $formattedTimestamp", style = MaterialTheme.typography.bodyMedium)
                 }
                 is ArtistDetailUiState.DeletedOrNotFound -> {
                     Text(text = "Artist not found or deleted.", style = MaterialTheme.typography.bodyLarge)
