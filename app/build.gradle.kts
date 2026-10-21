@@ -2,6 +2,15 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "1.9.22"
+
+    // KSP plugin and Room 3 plugin matching lecture
+    id("com.google.devtools.ksp") version "2.3.11"
+    id("androidx.room3") version "3.0.3"
+}
+
+// Point schemaDirectory to a schemas folder in the project
+room3 {
+    schemaDirectory("$projectDir/schemas")
 }
 
 android {
@@ -63,4 +72,9 @@ dependencies {
 
     // Material Icons
     implementation("androidx.compose.material:material-icons-extended")
+
+    // Room 3 runtime, compiler, and bundled driver from lecture
+    implementation("androidx.room3:room3-runtime:3.0.3")
+    implementation("androidx.sqlite:sqlite-bundled:2.7.1")
+    ksp("androidx.room3:room3-compiler:3.0.3")
 }
