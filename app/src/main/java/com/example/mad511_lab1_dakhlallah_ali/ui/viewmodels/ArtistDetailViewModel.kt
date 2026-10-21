@@ -34,6 +34,13 @@ class ArtistDetailViewModel(
             initialValue = ArtistDetailUiState.DeletedOrNotFound
         )
 
+    // Toggles favorite status for the current artist
+    fun toggleFavorite() {
+        viewModelScope.launch {
+            repository.toggleFavorite(artistId)
+        }
+    }
+
     // Deletes the current artist and triggers success callback
     fun deleteArtist(onSuccess: () -> Unit) {
         viewModelScope.launch {

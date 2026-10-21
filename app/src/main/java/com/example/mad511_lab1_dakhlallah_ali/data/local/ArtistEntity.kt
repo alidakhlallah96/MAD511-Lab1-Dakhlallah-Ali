@@ -22,27 +22,30 @@ data class ArtistEntity(
     val yearFormed: Int,
 
     @ColumnInfo(name = "added_at")
-    val addedAt: Instant = Instant.now()
+    val addedAt: Instant = Instant.now(),
+
+    @ColumnInfo(name = "is_favorite", defaultValue = "0")
+    val isFavorite: Boolean = false
 )
 
-// Maps entity to domain model
 fun ArtistEntity.toArtist(): Artist {
     return Artist(
         id = id,
         name = name,
         genre = genre,
         yearFormed = yearFormed,
-        addedAt = addedAt
+        addedAt = addedAt,
+        isFavorite = isFavorite
     )
 }
 
-// Maps domain model to entity
 fun Artist.toEntity(): ArtistEntity {
     return ArtistEntity(
         id = id,
         name = name,
         genre = genre,
         yearFormed = yearFormed,
-        addedAt = addedAt
+        addedAt = addedAt,
+        isFavorite = isFavorite
     )
 }

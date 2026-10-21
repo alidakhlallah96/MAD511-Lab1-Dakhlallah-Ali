@@ -7,5 +7,6 @@ data class Artist(
     val name: String,
     val genre: String,
     val yearFormed: Int,
-    val addedAt: Instant = Instant.now()
+    val addedAt: Instant = Instant.now(),
+    val isFavorite: Boolean = false
 )

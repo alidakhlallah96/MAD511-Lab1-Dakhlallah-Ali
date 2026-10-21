@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,6 +47,7 @@ fun ArtistDetailRoute(
 
     ArtistDetailScreen(
         uiState = uiState,
+        onToggleFavoriteClick = viewModel::toggleFavorite,
         onConfirmDeleteClick = { onConfirmDeleteClick(artistId) },
         onBackClick = onBackClick
     )
@@ -55,6 +58,7 @@ fun ArtistDetailRoute(
 @Composable
 fun ArtistDetailScreen(
     uiState: ArtistDetailUiState,
+    onToggleFavoriteClick: () -> Unit,
     onConfirmDeleteClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -69,6 +73,13 @@ fun ArtistDetailScreen(
                 },
                 actions = {
                     if (uiState is ArtistDetailUiState.Success) {
+                        IconButton(onClick = onToggleFavoriteClick) {
+                            Icon(
+                                imageVector = if (uiState.artist.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = if (uiState.artist.isFavorite) "Unfavorite Artist" else "Favorite Artist",
+                                tint = if (uiState.artist.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                         IconButton(onClick = onConfirmDeleteClick) {
                             Icon(Icons.Default.Delete, contentDescription = "Delete Artist")
                         }
@@ -86,7 +97,6 @@ fun ArtistDetailScreen(
         ) {
             when (uiState) {
                 is ArtistDetailUiState.Success -> {
-                    // Formats addedAt timestamp into readable local date and time
                     val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
                         .withZone(ZoneId.systemDefault())
                     val formattedTimestamp = formatter.format(uiState.artist.addedAt)
@@ -109,7 +119,8 @@ fun ArtistDetailScreen(
 fun ArtistDetailScreenPreview() {
     ChicagoBearsTheme {
         ArtistDetailScreen(
-            uiState = ArtistDetailUiState.Success(Artist(1, "Pink Floyd", "Progressive Rock", 1965)),
+            uiState = ArtistDetailUiState.Success(Artist(1, "Pink Floyd", "Progressive Rock", 1965, isFavorite = true)),
+            onToggleFavoriteClick = {},
             onConfirmDeleteClick = {},
             onBackClick = {}
         )

@@ -3,6 +3,7 @@ package com.example.mad511_lab1_dakhlallah_ali.data.local
 import com.example.mad511_lab1_dakhlallah_ali.Artist
 import com.example.mad511_lab1_dakhlallah_ali.data.ArtistRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import java.time.Instant
 
@@ -24,9 +25,16 @@ class RoomArtistRepository(private val dao: ArtistDao) : ArtistRepository {
             name = name,
             genre = genre,
             yearFormed = yearFormed,
-            addedAt = Instant.now()
+            addedAt = Instant.now(),
+            isFavorite = false
         )
         dao.upsertArtist(entity)
+    }
+
+    override suspend fun toggleFavorite(id: Int) {
+        val currentEntity = dao.getArtist(id).firstOrNull() ?: return
+        val updatedEntity = currentEntity.copy(isFavorite = !currentEntity.isFavorite)
+        dao.upsertArtist(updatedEntity)
     }
 
     override suspend fun deleteArtist(id: Int) = dao.deleteArtist(id)

@@ -22,6 +22,9 @@ interface ArtistRepository {
     // Suspend function to add an artist
     suspend fun addArtist(name: String, genre: String, yearFormed: Int)
 
+    // Suspend function to toggle favorite status
+    suspend fun toggleFavorite(id: Int)
+
     // Suspend function to delete an artist by id
     suspend fun deleteArtist(id: Int)
 }
@@ -63,6 +66,15 @@ class FakeArtistRepository : ArtistRepository {
                 addedAt = Instant.now()
             )
             currentList + newArtist
+        }
+    }
+
+    // Toggles favorite status for artist matching given ID
+    override suspend fun toggleFavorite(id: Int) {
+        _artists.update { currentList ->
+            currentList.map { artist ->
+                if (artist.id == id) artist.copy(isFavorite = !artist.isFavorite) else artist
+            }
         }
     }
 
