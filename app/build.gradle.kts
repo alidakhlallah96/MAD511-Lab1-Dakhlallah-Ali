@@ -6,6 +6,9 @@ plugins {
     // KSP plugin and Room 3 plugin matching lecture
     id("com.google.devtools.ksp") version "2.3.11"
     id("androidx.room3") version "3.0.3"
+
+    // hilt generates the component code at build time, through the same ksp that Room already uses
+    alias(libs.plugins.hilt)
 }
 
 // Point schemaDirectory to a schemas folder in the project
@@ -77,4 +80,9 @@ dependencies {
     implementation("androidx.room3:room3-runtime:3.0.3")
     implementation("androidx.sqlite:sqlite-bundled:2.7.1")
     ksp("androidx.room3:room3-compiler:3.0.3")
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.viewmodel.compose)
+
 }
