@@ -1,15 +1,17 @@
 package com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.mad511_lab1_dakhlallah_ali.Artist
 import com.example.mad511_lab1_dakhlallah_ali.data.ArtistRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 // UI state for detail screen
 sealed interface ArtistDetailUiState {
@@ -17,10 +19,14 @@ sealed interface ArtistDetailUiState {
     data object DeletedOrNotFound : ArtistDetailUiState
 }
 
-class ArtistDetailViewModel(
-    private val artistId: Int,
-    private val repository: ArtistRepository
+@HiltViewModel
+class ArtistDetailViewModel @Inject constructor(
+    private val repository: ArtistRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    // Retrieve artistId passed from navigation destination route
+    private val artistId: Int = checkNotNull(savedStateHandle["artistId"])
 
     // Observes artist by ID from the repository
     val uiState: StateFlow<ArtistDetailUiState> = repository.getArtist(artistId)
@@ -47,14 +53,5 @@ class ArtistDetailViewModel(
             repository.deleteArtist(artistId)
             onSuccess()
         }
-    }
-
-    companion object {
-        fun provideFactory(artistId: Int, repository: ArtistRepository): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return ArtistDetailViewModel(artistId, repository) as T
-                }
-            }
     }
 }

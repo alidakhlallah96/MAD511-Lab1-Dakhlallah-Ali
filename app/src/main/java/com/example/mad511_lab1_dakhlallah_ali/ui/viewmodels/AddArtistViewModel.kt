@@ -1,13 +1,14 @@
 package com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.mad511_lab1_dakhlallah_ali.data.ArtistRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 // Holds form state and error messages for adding an artist
 data class AddArtistUiState(
@@ -29,7 +30,8 @@ data class AddArtistUiState(
                 yearError == null
 }
 
-class AddArtistViewModel(
+@HiltViewModel
+class AddArtistViewModel @Inject constructor(
     private val repository: ArtistRepository
 ) : ViewModel() {
 
@@ -69,14 +71,5 @@ class AddArtistViewModel(
                 onSuccess()
             }
         }
-    }
-
-    companion object {
-        fun provideFactory(repository: ArtistRepository): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return AddArtistViewModel(repository) as T
-                }
-            }
     }
 }

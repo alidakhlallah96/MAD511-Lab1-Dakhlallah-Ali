@@ -1,10 +1,10 @@
 package com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.mad511_lab1_dakhlallah_ali.Artist
 import com.example.mad511_lab1_dakhlallah_ali.data.ArtistRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
 // Single immutable UiState wrapping search query and matching artists
 data class ArtistListUiState(
@@ -23,7 +24,10 @@ data class ArtistListUiState(
     val artists: List<Artist> = emptyList()
 )
 
-class ArtistListViewModel(private val repository: ArtistRepository) : ViewModel() {
+@HiltViewModel
+class ArtistListViewModel @Inject constructor(
+    private val repository: ArtistRepository
+) : ViewModel() {
 
     // The text in the search box, held here so it survives rotation
     private val _query = MutableStateFlow("")
@@ -47,13 +51,4 @@ class ArtistListViewModel(private val repository: ArtistRepository) : ViewModel(
     val uiState: StateFlow<ArtistListUiState> = combine(_query, results) { query, artists ->
         ArtistListUiState(query = query, artists = artists)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ArtistListUiState())
-
-    companion object {
-        fun provideFactory(repository: ArtistRepository): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return ArtistListViewModel(repository) as T
-                }
-            }
-    }
 }
