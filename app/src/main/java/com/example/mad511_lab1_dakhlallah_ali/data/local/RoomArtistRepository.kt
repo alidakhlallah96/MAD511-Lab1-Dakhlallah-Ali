@@ -6,9 +6,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import java.time.Instant
+import javax.inject.Inject
+import javax.inject.Singleton
 
 // Room implementation of ArtistRepository mapping
-class RoomArtistRepository(private val dao: ArtistDao) : ArtistRepository {
+@Singleton
+class RoomArtistRepository @Inject constructor(
+    private val dao: ArtistDao
+) : ArtistRepository {
 
     override val artists: Flow<List<Artist>> =
         dao.getAllArtists().map { rows -> rows.map { it.toArtist() } }
