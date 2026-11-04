@@ -18,7 +18,7 @@ room3 {
 
 android {
     namespace = "com.example.mad511_lab1_dakhlallah_ali"
-    compileSdk = 36 // Updated to 36 to support Navigation 3 and activity-compose alpha dependencies
+    compileSdk = 37 // Set to 37 to support hilt-lifecycle-viewmodel-compose:1.4.0
 
     defaultConfig {
         applicationId = "com.example.mad511_lab1_dakhlallah_ali"
@@ -81,8 +81,8 @@ dependencies {
     implementation("androidx.sqlite:sqlite-bundled:2.7.1")
     ksp("androidx.room3:room3-compiler:3.0.3")
 
+    // Hilt & Hilt Compose
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.viewmodel.compose)
-
 }

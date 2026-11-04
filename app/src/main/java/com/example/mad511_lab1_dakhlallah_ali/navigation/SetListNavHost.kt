@@ -7,8 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
@@ -37,6 +40,9 @@ fun SetListNavHost() {
         }
     }
 
+    // Capture the activity/parent owner to pass Hilt's default factory down
+    val parentOwner = LocalViewModelStoreOwner.current
+
     // 2. ViewModelStore Decorator
     val viewModelStores = remember { mutableMapOf<String, ViewModelStore>() }
 
@@ -49,11 +55,21 @@ fun SetListNavHost() {
     ) { entry ->
         val keyString = entry.key.toString()
         val viewModelStore = viewModelStores.getOrPut(keyString) { ViewModelStore() }
-        val viewModelStoreOwner = remember(keyString) {
-            object : ViewModelStoreOwner {
+
+        val viewModelStoreOwner = remember(keyString, parentOwner) {
+            object : ViewModelStoreOwner, HasDefaultViewModelProviderFactory {
                 override val viewModelStore: ViewModelStore = viewModelStore
+
+                override val defaultViewModelProviderFactory: ViewModelProvider.Factory
+                    get() = (parentOwner as? HasDefaultViewModelProviderFactory)?.defaultViewModelProviderFactory
+                        ?: ViewModelProvider.NewInstanceFactory()
+
+                override val defaultViewModelCreationExtras: CreationExtras
+                    get() = (parentOwner as? HasDefaultViewModelProviderFactory)?.defaultViewModelCreationExtras
+                        ?: CreationExtras.Empty
             }
         }
+
         CompositionLocalProvider(
             LocalViewModelStoreOwner provides viewModelStoreOwner
         ) {
