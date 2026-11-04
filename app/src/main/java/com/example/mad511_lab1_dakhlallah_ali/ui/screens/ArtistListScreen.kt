@@ -33,8 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mad511_lab1_dakhlallah_ali.Artist
 import com.example.mad511_lab1_dakhlallah_ali.ui.theme.ChicagoBearsTheme
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.ArtistListUiState
@@ -43,9 +43,9 @@ import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.ArtistListViewModel
 @Composable
 fun ArtistListRoute(
     onArtistClick: (Int) -> Unit,
-    onAddArtistClick: () -> Unit
+    onAddArtistClick: () -> Unit,
+    viewModel: ArtistListViewModel = hiltViewModel()
 ) {
-    val viewModel: ArtistListViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ArtistListScreen(

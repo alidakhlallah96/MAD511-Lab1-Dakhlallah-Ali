@@ -22,18 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mad511_lab1_dakhlallah_ali.ui.theme.ChicagoBearsTheme
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.AddArtistUiState
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.AddArtistViewModel
 
-// Stateful Route composable
+// Stateful Route composable using Hilt injection
 @Composable
 fun AddArtistRoute(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    viewModel: AddArtistViewModel = hiltViewModel()
 ) {
-    val viewModel: AddArtistViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     AddArtistScreen(
