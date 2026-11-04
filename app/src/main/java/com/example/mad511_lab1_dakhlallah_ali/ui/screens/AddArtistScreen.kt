@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mad511_lab1_dakhlallah_ali.data.ArtistRepository
 import com.example.mad511_lab1_dakhlallah_ali.ui.theme.ChicagoBearsTheme
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.AddArtistUiState
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.AddArtistViewModel
@@ -32,12 +31,9 @@ import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.AddArtistViewModel
 // Stateful Route composable
 @Composable
 fun AddArtistRoute(
-    repository: ArtistRepository,
     onBackClick: () -> Unit
 ) {
-    val viewModel: AddArtistViewModel = viewModel(
-        factory = AddArtistViewModel.provideFactory(repository)
-    )
+    val viewModel: AddArtistViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     AddArtistScreen(

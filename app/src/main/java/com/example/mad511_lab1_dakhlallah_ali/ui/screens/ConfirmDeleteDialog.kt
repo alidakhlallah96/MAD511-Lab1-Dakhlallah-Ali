@@ -6,7 +6,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mad511_lab1_dakhlallah_ali.data.ArtistRepository
 import com.example.mad511_lab1_dakhlallah_ali.ui.theme.ChicagoBearsTheme
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.ArtistDetailViewModel
 
@@ -14,13 +13,10 @@ import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.ArtistDetailViewMode
 @Composable
 fun ConfirmDeleteRoute(
     artistId: Int,
-    repository: ArtistRepository,
     onDeleted: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val viewModel: ArtistDetailViewModel = viewModel(
-        factory = ArtistDetailViewModel.provideFactory(artistId, repository)
-    )
+    val viewModel: ArtistDetailViewModel = viewModel()
 
     ConfirmDeleteScreen(
         onConfirm = { viewModel.deleteArtist(onSuccess = onDeleted) },

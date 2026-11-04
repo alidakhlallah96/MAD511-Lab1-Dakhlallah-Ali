@@ -36,20 +36,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mad511_lab1_dakhlallah_ali.Artist
-import com.example.mad511_lab1_dakhlallah_ali.data.ArtistRepository
 import com.example.mad511_lab1_dakhlallah_ali.ui.theme.ChicagoBearsTheme
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.ArtistListUiState
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.ArtistListViewModel
 
 @Composable
 fun ArtistListRoute(
-    repository: ArtistRepository,
     onArtistClick: (Int) -> Unit,
     onAddArtistClick: () -> Unit
 ) {
-    val viewModel: ArtistListViewModel = viewModel(
-        factory = ArtistListViewModel.provideFactory(repository)
-    )
+    val viewModel: ArtistListViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ArtistListScreen(

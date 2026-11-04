@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mad511_lab1_dakhlallah_ali.Artist
-import com.example.mad511_lab1_dakhlallah_ali.data.ArtistRepository
 import com.example.mad511_lab1_dakhlallah_ali.ui.theme.ChicagoBearsTheme
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.ArtistDetailUiState
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.ArtistDetailViewModel
@@ -36,13 +35,10 @@ import java.time.format.FormatStyle
 @Composable
 fun ArtistDetailRoute(
     artistId: Int,
-    repository: ArtistRepository,
     onConfirmDeleteClick: (Int) -> Unit,
     onBackClick: () -> Unit
 ) {
-    val viewModel: ArtistDetailViewModel = viewModel(
-        factory = ArtistDetailViewModel.provideFactory(artistId, repository)
-    )
+    val viewModel: ArtistDetailViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ArtistDetailScreen(

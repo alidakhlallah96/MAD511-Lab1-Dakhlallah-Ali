@@ -6,19 +6,18 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.mad511_lab1_dakhlallah_ali.navigation.SetListNavHost
 import com.example.mad511_lab1_dakhlallah_ali.ui.theme.ChicagoBearsTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+// Allows Hilt to inject dependencies into ViewModels used inside this activity
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Get the Room backed repository from application container
-        val appContainer = (application as SetListApplication).container
-        val repository = appContainer.artistRepository
-
         setContent {
             ChicagoBearsTheme {
-                SetListNavHost(repository = repository)
+                SetListNavHost()
             }
         }
     }

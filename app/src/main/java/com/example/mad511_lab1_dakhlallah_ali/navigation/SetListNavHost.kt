@@ -12,18 +12,17 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.navEntryDecorator
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
-import com.example.mad511_lab1_dakhlallah_ali.data.ArtistRepository
 import com.example.mad511_lab1_dakhlallah_ali.ui.screens.AddArtistRoute
 import com.example.mad511_lab1_dakhlallah_ali.ui.screens.ArtistDetailRoute
 import com.example.mad511_lab1_dakhlallah_ali.ui.screens.ArtistListRoute
 import com.example.mad511_lab1_dakhlallah_ali.ui.screens.ConfirmDeleteRoute
-import androidx.navigation3.runtime.navEntryDecorator
 
 @Composable
-fun SetListNavHost(repository: ArtistRepository) {
+fun SetListNavHost() {
 
     val backStack = rememberNavBackStack<SetListDestination>(SetListDestination.ArtistList)
 
@@ -81,7 +80,6 @@ fun SetListNavHost(repository: ArtistRepository) {
 
             entry<SetListDestination.ArtistList> {
                 ArtistListRoute(
-                    repository = repository,
                     onArtistClick = { id -> backStack.add(SetListDestination.ArtistDetail(id)) },
                     onAddArtistClick = { backStack.add(SetListDestination.AddArtist) }
                 )
@@ -89,7 +87,6 @@ fun SetListNavHost(repository: ArtistRepository) {
 
             entry<SetListDestination.AddArtist> {
                 AddArtistRoute(
-                    repository = repository,
                     onBackClick = { backStack.removeLastOrNull() }
                 )
             }
@@ -97,7 +94,6 @@ fun SetListNavHost(repository: ArtistRepository) {
             entry<SetListDestination.ArtistDetail> { key: SetListDestination.ArtistDetail ->
                 ArtistDetailRoute(
                     artistId = key.artistId,
-                    repository = repository,
                     onConfirmDeleteClick = { id -> backStack.add(SetListDestination.ConfirmDelete(id)) },
                     onBackClick = { backStack.removeLastOrNull() }
                 )
@@ -108,7 +104,6 @@ fun SetListNavHost(repository: ArtistRepository) {
             ) { key: SetListDestination.ConfirmDelete ->
                 ConfirmDeleteRoute(
                     artistId = key.artistId,
-                    repository = repository,
                     onDeleted = {
                         backStack.removeLastOrNull()
                         backStack.removeLastOrNull()
