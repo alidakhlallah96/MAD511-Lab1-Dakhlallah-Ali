@@ -1,0 +1,4 @@
+/Users/alidakhlallahsmac/StudioProjects/MAD511-Lab1-Dakhlallah-Ali/app/build/generated/hilt/component_sources/debug/com/example/mad511_lab1_dakhlallah_ali/SetListApplication_HiltComponents.java:142: error: [Dagger/MissingBinding] com.example.mad511_lab1_dakhlallah_ali.data.ArtistRepository cannot be provided without an @Provides-annotated method.
+public abstract static class SingletonC implements SetListApplication_GeneratedInjector,
+
+This error happens because Hilt is trying to create the ViewModels, but it doesn't know how to build `ArtistRepository` since it's an interface; to fix it, we restore the `@Binds` function in `RepositoryModule.kt` so Hilt knows to use `RoomArtistRepository` whenever the repository is requested.
