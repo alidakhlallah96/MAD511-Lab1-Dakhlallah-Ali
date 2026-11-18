@@ -3,22 +3,19 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "2.2.10"
 
-    // KSP plugin and Room 3 plugin matching lecture
     id("com.google.devtools.ksp") version "2.3.11"
     id("androidx.room3") version "3.0.3"
 
-    // hilt generates the component code at build time, through the same ksp that Room already uses
     alias(libs.plugins.hilt)
 }
 
-// Point schemaDirectory to a schemas folder in the project
 room3 {
     schemaDirectory("$projectDir/schemas")
 }
 
 android {
     namespace = "com.example.mad511_lab1_dakhlallah_ali"
-    compileSdk = 37 // Set to 37 to support hilt-lifecycle-viewmodel-compose:1.4.0
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.mad511_lab1_dakhlallah_ali"
@@ -67,7 +64,6 @@ dependencies {
     implementation("androidx.navigation3:navigation3-runtime:1.0.0-alpha02")
     implementation("androidx.navigation3:navigation3-ui:1.0.0-alpha02")
 
-    // replaces the old hardcoded serialization dependency with the version catalog entry
     implementation(libs.kotlinx.serialization.json)
 
     // ViewModel & Lifecycle for Jetpack Compose
@@ -77,22 +73,22 @@ dependencies {
     // Material Icons
     implementation("androidx.compose.material:material-icons-extended")
 
-    // Room 3 runtime, compiler, and bundled driver from lecture
+    // Room 3 runtime, compiler, and bundled driver
     implementation("androidx.room3:room3-runtime:3.0.3")
     implementation("androidx.sqlite:sqlite-bundled:2.7.1")
     ksp("androidx.room3:room3-compiler:3.0.3")
 
-    // Hilt & Hilt Compose
+    // Hilt, Hilt Compose & Hilt Navigation Compose (fixes hiltViewModel reference)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.viewmodel.compose)
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-    // work-runtime includes CoroutineWorker and the Flow helpers directly, so work-runtime-ktx
-    // is not needed. work-testing lives in androidTest because workers need a real Context
+    // WorkManager runtime & testing
     implementation(libs.androidx.work.runtime)
     androidTestImplementation(libs.androidx.work.testing)
 
-    // lets Hilt inject dependencies into @HiltWorker classes through KSP at build time
+    // Hilt worker integration
     implementation(libs.hilt.work)
     ksp(libs.hilt.work.compiler)
 }

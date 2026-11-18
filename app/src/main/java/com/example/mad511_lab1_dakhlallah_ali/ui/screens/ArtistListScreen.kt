@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,13 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mad511_lab1_dakhlallah_ali.Artist
 import com.example.mad511_lab1_dakhlallah_ali.ui.theme.ChicagoBearsTheme
-import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.ArtistListUiState
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.ArtistListViewModel
-
+import com.example.mad511_lab1_dakhlallah_ali.work.BackupStatus
 @Composable
 fun ArtistListRoute(
     onArtistClick: (Int) -> Unit,
@@ -52,6 +52,8 @@ fun ArtistListRoute(
         query = uiState.query,
         onQueryChange = viewModel::onQueryChange,
         artists = uiState.artists,
+        backupStatus = uiState.backupStatus,
+        onBackupClick = viewModel::backupNow,
         onArtistClick = onArtistClick,
         onAddArtistClick = onAddArtistClick
     )
@@ -63,11 +65,26 @@ fun ArtistListScreen(
     query: String,
     onQueryChange: (String) -> Unit,
     artists: List<Artist>,
+    backupStatus: BackupStatus,
+    onBackupClick: () -> Unit,
     onArtistClick: (Int) -> Unit,
     onAddArtistClick: () -> Unit
 ) {
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Artists") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Artists") },
+                actions = {
+                    // Backup now action button in the top app bar
+                    IconButton(onClick = onBackupClick) {
+                        Icon(
+                            imageVector = Icons.Default.CloudUpload,
+                            contentDescription = "Backup Now"
+                        )
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddArtistClick) {
                 Icon(Icons.Default.Add, contentDescription = "Add Artist")
@@ -96,6 +113,36 @@ fun ArtistListScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             )
+
+            // Status text line showing the backup progress or result
+            when (backupStatus) {
+                is BackupStatus.Running -> {
+                    Text(
+                        text = "Backing up",
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+                is BackupStatus.Finished -> {
+                    Text(
+                        text = "Last backup: ${backupStatus.count} artists",
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                is BackupStatus.Failed -> {
+                    Text(
+                        text = "Backup failed",
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+                is BackupStatus.Idle -> {
+                    // Hidden when idle
+                }
+            }
 
             if (artists.isEmpty()) {
                 Box(
@@ -143,6 +190,8 @@ fun ArtistListScreenPreview() {
                 Artist(1, "The Beatles", "Rock", 1960, isFavorite = true),
                 Artist(2, "Daft Punk", "Electronic", 1993, isFavorite = false)
             ),
+            backupStatus = BackupStatus.Idle,
+            onBackupClick = {},
             onArtistClick = {},
             onAddArtistClick = {}
         )

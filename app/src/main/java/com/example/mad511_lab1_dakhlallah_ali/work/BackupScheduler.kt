@@ -10,16 +10,17 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// Represents the current state of backup work for the UI
+// Represents the four states of backup work for the UI
 sealed interface BackupStatus {
     data object Idle : BackupStatus
-    data object Waiting : BackupStatus
-    data object BackingUp : BackupStatus
+    data object Running : BackupStatus
+    data class Finished(val count: Int) : BackupStatus
+    data object Failed : BackupStatus
 }
 
 // Schedules and tracks periodic and manual backup work
@@ -106,18 +107,32 @@ class BackupScheduler @Inject constructor(
             .enqueue()
     }
 
-    // Watches backup jobs and maps their state for the UI
-    fun status(): Flow<BackupStatus> = combine(
-        workManager.getWorkInfosForUniqueWorkFlow(PERIODIC_BACKUP_WORK),
-        workManager.getWorkInfosForUniqueWorkFlow(BACKUP_NOW_WORK),
-    ) { periodicInfos, nowInfos ->
-        val states = (periodicInfos + nowInfos).map { it.state }
-        when {
-            WorkInfo.State.RUNNING in states -> BackupStatus.BackingUp
-            WorkInfo.State.ENQUEUED in states -> BackupStatus.Waiting
-            else -> BackupStatus.Idle
+    // Watches backup jobs and maps their state into the 4 UI cases
+    fun status(): Flow<BackupStatus> = workManager
+        .getWorkInfosForUniqueWorkFlow(BACKUP_NOW_WORK)
+        .map { workInfos ->
+            if (workInfos.isEmpty()) {
+                return@map BackupStatus.Idle
+            }
+
+            val states = workInfos.map { it.state }
+            when {
+                states.any { it == WorkInfo.State.RUNNING || it == WorkInfo.State.ENQUEUED || it == WorkInfo.State.BLOCKED } -> {
+                    BackupStatus.Running
+                }
+                states.any { it == WorkInfo.State.FAILED || it == WorkInfo.State.CANCELLED } -> {
+                    BackupStatus.Failed
+                }
+                states.all { it == WorkInfo.State.SUCCEEDED } -> {
+                    val backupInfo = workInfos.find {
+                        it.outputData.getInt(BackupWorker.KEY_ARTIST_COUNT, -1) != -1
+                    }
+                    val count = backupInfo?.outputData?.getInt(BackupWorker.KEY_ARTIST_COUNT, 0) ?: 0
+                    BackupStatus.Finished(count)
+                }
+                else -> BackupStatus.Idle
+            }
         }
-    }
 
     // Cancels all unique work chains
     fun cancelAll() {

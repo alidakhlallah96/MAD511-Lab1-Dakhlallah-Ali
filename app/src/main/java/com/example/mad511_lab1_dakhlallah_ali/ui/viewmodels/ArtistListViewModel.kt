@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mad511_lab1_dakhlallah_ali.Artist
 import com.example.mad511_lab1_dakhlallah_ali.data.ArtistRepository
+import com.example.mad511_lab1_dakhlallah_ali.work.BackupScheduler
+import com.example.mad511_lab1_dakhlallah_ali.work.BackupStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -18,15 +20,17 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-// Single immutable UiState wrapping search query and matching artists
+// Single immutable UiState wrapping search query, artists, and backup status
 data class ArtistListUiState(
     val query: String = "",
-    val artists: List<Artist> = emptyList()
+    val artists: List<Artist> = emptyList(),
+    val backupStatus: BackupStatus = BackupStatus.Idle
 )
 
 @HiltViewModel
 class ArtistListViewModel @Inject constructor(
-    private val repository: ArtistRepository
+    private val repository: ArtistRepository,
+    private val backupScheduler: BackupScheduler
 ) : ViewModel() {
 
     // The text in the search box, held here so it survives rotation
@@ -47,8 +51,17 @@ class ArtistListViewModel @Inject constructor(
         } // New term cancels previous query
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
+    // Watch the backup status flow from the scheduler
+    private val backupStatus: StateFlow<BackupStatus> = backupScheduler.status()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BackupStatus.Idle)
+
     // Combined UiState flow exposed to the screen
-    val uiState: StateFlow<ArtistListUiState> = combine(_query, results) { query, artists ->
-        ArtistListUiState(query = query, artists = artists)
+    val uiState: StateFlow<ArtistListUiState> = combine(_query, results, backupStatus) { query, artists, status ->
+        ArtistListUiState(query = query, artists = artists, backupStatus = status)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ArtistListUiState())
+
+    // Triggers a manual backup through the scheduler
+    fun backupNow() {
+        backupScheduler.backupNow()
+    }
 }
