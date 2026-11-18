@@ -1,9 +1,12 @@
 package com.example.mad511_lab1_dakhlallah_ali.work
 
 import android.content.Context
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import java.io.File
 
 // Returns the oldest backup file names to delete
@@ -34,10 +37,11 @@ fun filesToDelete(fileNames: List<String>, keep: Int): List<String> {
 }
 
 // Deletes old backup files
-class CleanupWorker(
-    context: Context,
-    params: WorkerParameters,
-) : CoroutineWorker(context, params) {
+@HiltWorker
+class CleanupWorker @AssistedInject constructor(
+    @Assisted appContext: Context,
+    @Assisted workerParams: WorkerParameters,
+) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
         // Read how many backups to keep (default 5)
