@@ -5,7 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel // <-- Make sure this is imported
 import com.example.mad511_lab1_dakhlallah_ali.ui.theme.ChicagoBearsTheme
 import com.example.mad511_lab1_dakhlallah_ali.ui.viewmodels.ArtistDetailViewModel
 
@@ -16,7 +16,10 @@ fun ConfirmDeleteRoute(
     onDeleted: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val viewModel: ArtistDetailViewModel = viewModel()
+    // Instantiate using Hilt's assisted factory with the passed artistId
+    val viewModel: ArtistDetailViewModel = hiltViewModel<ArtistDetailViewModel, ArtistDetailViewModel.Factory> { factory ->
+        factory.create(artistId)
+    }
 
     ConfirmDeleteScreen(
         onConfirm = { viewModel.deleteArtist(onSuccess = onDeleted) },
