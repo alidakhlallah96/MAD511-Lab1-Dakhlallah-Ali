@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    kotlin("plugin.serialization") version "1.9.22"
+    kotlin("plugin.serialization") version "2.2.10"
 
     // KSP plugin and Room 3 plugin matching lecture
     id("com.google.devtools.ksp") version "2.3.11"
@@ -67,7 +67,8 @@ dependencies {
     implementation("androidx.navigation3:navigation3-runtime:1.0.0-alpha02")
     implementation("androidx.navigation3:navigation3-ui:1.0.0-alpha02")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    // replaces the old hardcoded serialization dependency with the version catalog entry
+    implementation(libs.kotlinx.serialization.json)
 
     // ViewModel & Lifecycle for Jetpack Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
@@ -85,4 +86,13 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.viewmodel.compose)
+
+    // work-runtime includes CoroutineWorker and the Flow helpers directly, so work-runtime-ktx
+    // is not needed. work-testing lives in androidTest because workers need a real Context
+    implementation(libs.androidx.work.runtime)
+    androidTestImplementation(libs.androidx.work.testing)
+
+    // lets Hilt inject dependencies into @HiltWorker classes through KSP at build time
+    implementation(libs.hilt.work)
+    ksp(libs.hilt.work.compiler)
 }
